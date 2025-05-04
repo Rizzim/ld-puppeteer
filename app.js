@@ -5,15 +5,12 @@ const app = express();
 app.use(json());
 // routes(app);
 
-// scripts/downloadReports.js
 import downloadReports from './services/puppeteerService.js';
-
-
 
 const email = 'zmomin89@gmail.com';
 const password = 'Duvalmkt@2024';
 const token = 'your_token';
-const reportIds = ['123', '456'];
+const reportIds = ['bdd_option:retailer-reports-activity-filters-report-name-4', 'bdd_option:retailer-reports-activity-filters-report-name-5'];
 
 (async () => {
   try {
