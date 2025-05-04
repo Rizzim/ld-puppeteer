@@ -216,7 +216,7 @@ async function downloadReports(email, password, token, reportIds) {
   } finally {
     console.log("All done, closing browser");
     await browser.close();
-    process.exit(0);
+    // process.exit(0); // This stops the running script
   }
 }
 

@@ -13,7 +13,9 @@ export const runPuppeteer = asyncHandler(async (req, res) => {
     try {
         await downloadReports(email, password, token, reportIds);
         res.status(200).json({ message: 'Reports downloaded and processed successfully' });
+        process.exit(0);
     } catch (error) {
         res.status(500).json({ message: 'Error downloading reports', error });
+        process.exit(1);
     }
 });
