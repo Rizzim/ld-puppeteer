@@ -126,40 +126,22 @@ if (!found) {
 
   await wait(2000);
 
-  const SEARCH_BUTTON_SELECTOR = 'rw-button[variant="contained"] button.rw-button--contained';
-
-  async function clickSearchButton(page) {
-    // 1. Ensure Angular has stabilized (optional)
-    await page.waitForFunction(
-      () => window.getAllAngularTestabilities?.().every(t => t.isStable()),
-      { timeout: 60000 }
-    );
-  
-    // 2. Wait for the search button
-    try {
-      await page.waitForSelector(SEARCH_BUTTON_SELECTOR, {
-        visible: true,
-        timeout: 60000,
-      });
-    } catch (error) {
-      console.error('Timeout waiting for Search button:', error);
-      await page.screenshot({ path: 'search-button-debug.png' });
-      throw error;
+  console.log('Starting tab navigation to reach search button...');
+    for (let i = 0; i < 4; i++) {
+      await page.keyboard.press('Tab');
+      // Small delay between tabs to ensure focus changes
+      await wait(200);
+      console.log(`Pressed Tab (${i+1}/4)`);
     }
-  
-    // 3. Click the button
-    const buttons = await page.$$(SEARCH_BUTTON_SELECTOR);
-    for (const btn of buttons) {
-      const text = await btn.evaluate(el => el.textContent.trim());
-      if (text === 'Search') {
-        await btn.click();
-        console.log('Clicked the "Search" button.');
-        return;
-      }
-    }
-  
-    throw new Error('"Search" button was not found among matched elements');
-  }
+    
+    // Press Enter to activate the search button
+    await page.keyboard.press('Enter');
+    console.log('Pressed Enter to trigger search');
+    
+    // Wait for the search results to load
+    await wait(3000);
+    console.log('Search completed');
+    
 
 // Small pause if needed
 await wait(2000);
@@ -260,6 +242,7 @@ return;
         await browser.close();
     }
 }
+
 
 async function uploadReportToAPI(filePath, reportName, token) {
     console.log(`Uploading report: ${reportName}`);
