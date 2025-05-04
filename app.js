@@ -3,7 +3,24 @@ import routes from './utils/routes.js';
 const app = express();
 
 app.use(json());
-routes(app);
+// routes(app);
+
+import downloadReports from './services/puppeteerService.js';
+
+const email = 'zmomin89@gmail.com';
+const password = 'Duvalmkt@2024';
+const token = 'your_token';
+const reportIds = ['bdd_option:retailer-reports-activity-filters-report-name-4', 'bdd_option:retailer-reports-activity-filters-report-name-5'];
+
+(async () => {
+  try {
+    await downloadReports(email, password, token, reportIds);
+    console.log('✅ Reports downloaded successfully');
+  } catch (err) {
+    console.error('❌ Error downloading reports:', err);
+    process.exit(1);
+  }
+})();
 
 const PORT = process.env.PORT || 8020;
 app.listen(PORT, () => {
