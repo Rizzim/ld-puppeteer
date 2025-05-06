@@ -16,14 +16,20 @@ import { puppeteerOptions } from "../config/puppeteerConfig.js";
 import formatDate from "../utils/formatDate.js";
 import wait from "../utils/wait.js";
 import constants from "../utils/reportsConstants.js";
+import { tmpdir } from 'os';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+// const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const { reportNameToIdMap, reportIdToNameMap } = constants;
 
 async function downloadReports(email, password, token, reportIds) {
-  const downloadPath = resolve(__dirname, "../data");
-  const errorPath = resolve(__dirname, "../error");
+  // Use /tmp as the base writable directory
+  const baseTempDir = tmpdir();
+  const downloadPath = join(baseTempDir, "data");
+  const errorPath = join(baseTempDir, "error");
+
+  // const downloadPath = resolve(__dirname, "../data");
+  // const errorPath = resolve(__dirname, "../error");
 
   // Check if the directories exist, create them if they don't
   if (!existsSync(downloadPath)) {
