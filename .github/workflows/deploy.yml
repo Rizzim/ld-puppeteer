@@ -75,7 +75,7 @@ jobs:
           mkdir -p logs
           
           # Restart application with PM2
-          pm2 restart $PROJECT_NAME || pm2 start ecosystem.config.js
+          pm2 restart $PROJECT_NAME || pm2 start ecosystem.config.cjs
           
           # Save PM2 process list
           pm2 save
