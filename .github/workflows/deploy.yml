@@ -1,0 +1,90 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [ main ]  # Deploy when pushing to main branch
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run tests
+      run: npm test
+    
+    - name: Build application
+      run: npm run build  # Adjust if you have a build script
+    
+    - name: Deploy to VPS
+      if: github.ref == 'refs/heads/main'  # Only deploy on main branch
+      uses: appleboy/ssh-action@v0.1.7
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USERNAME }}  # Your existing cPanel user
+        key: ${{ secrets.VPS_SSH_KEY }}
+        port: ${{ secrets.VPS_PORT }}
+        script: |
+          # Define project variables
+          PROJECT_NAME="your-project-name"  # Change this for each project
+          PROJECT_PATH="/home/n12c975/nodejs-projects/$PROJECT_NAME"
+          REPO_URL="https://github.com/${{ github.repository }}.git"
+          
+          # Add PM2 to PATH
+          export PATH="$HOME/nodejs-projects/.global-packages/node_modules/.bin:$PATH"
+          
+          # Create nodejs-projects directory if it doesn't exist
+          mkdir -p /home/n12c975/nodejs-projects
+          
+          # Create project directory if it doesn't exist
+          mkdir -p $PROJECT_PATH
+          
+          # Navigate to project directory
+          cd $PROJECT_PATH
+          
+          # Initialize git repo if first deployment
+          if [ ! -d ".git" ]; then
+            git init
+            git remote add origin $REPO_URL
+          fi
+          
+          # Pull latest changes
+          git fetch origin main
+          git reset --hard origin/main
+          
+          # Install dependencies
+          npm ci --production
+          
+          # Run build if needed (uncomment if you have a build step)
+          # npm run build
+          
+          # Create logs directory
+          mkdir -p logs
+          
+          # Restart application with PM2
+          pm2 restart $PROJECT_NAME || pm2 start ecosystem.config.js
+          
+          # Save PM2 process list
+          pm2 save
+          
+          # Show current PM2 status
+          pm2 status
+
+    # - name: Health check
+    #   if: github.ref == 'refs/heads/main'
+    #   run: |
+    #     sleep 10
+    #     curl -f http://${{ secrets.VPS_HOST }}:3000/health || exit 1
