@@ -39,7 +39,7 @@ jobs:
         port: ${{ secrets.VPS_PORT }}
         script: |
           # Define project variables
-          PROJECT_NAME="your-project-name"  # Change this for each project
+          PROJECT_NAME="ld-puppeteer"  # Change this for each project
           PROJECT_PATH="/home/n12c975/nodejs-projects/$PROJECT_NAME"
           REPO_URL="https://github.com/${{ github.repository }}.git"
           
