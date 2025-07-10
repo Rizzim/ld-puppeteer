@@ -18,18 +18,18 @@ import wait from "../utils/wait.js";
 import constants from "../utils/reportsConstants.js";
 import { tmpdir } from 'os';
 
-// const __dirname = dirname(fileURLToPath(import.meta.url));
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const { reportNameToIdMap, reportIdToNameMap } = constants;
 
-async function downloadReports(email, password, token, reportIds) {
+async function downloadReports(email, password, reportIds) {
   // Use /tmp as the base writable directory
-  const baseTempDir = tmpdir();
-  const downloadPath = join(baseTempDir, "data");
-  const errorPath = join(baseTempDir, "error");
+  // const baseTempDir = tmpdir();
+  // const downloadPath = join(baseTempDir, "data");
+  // const errorPath = join(baseTempDir, "error");
 
-  // const downloadPath = resolve(__dirname, "../data");
-  // const errorPath = resolve(__dirname, "../error");
+  const downloadPath = resolve(__dirname, "../data");
+  const errorPath = resolve(__dirname, "../error");
 
   // Check if the directories exist, create them if they don't
   if (!existsSync(downloadPath)) {
@@ -200,7 +200,7 @@ async function downloadReports(email, password, token, reportIds) {
         .replace(/ /g, "")}.csv`;
 
       console.log(`Uploading ${filePath} as ${reportName}`);
-      await uploadReportToAPI(filePath, reportName, token);
+      await uploadReportToAPI(filePath, reportName);
 
       // After upload, delete the file
       if (existsSync(filePath)) {
@@ -219,6 +219,8 @@ async function downloadReports(email, password, token, reportIds) {
 
     await page.screenshot({ path: screenshotPath, fullPage: true });
     console.log(`Screenshot saved: ${screenshotPath}`);
+
+    throw error;
   } finally {
     console.log("All done, closing browser");
     await browser.close();
@@ -348,7 +350,7 @@ async function clickFirstReportAndDownloadCsv(page) {
   }
 }
 
-async function uploadReportToAPI(filePath, reportName, token) {
+async function uploadReportToAPI(filePath, reportName) {
   console.log(`Uploading report: ${reportName}`);
   console.log(`File path: ${filePath}`);
 
@@ -368,7 +370,7 @@ async function uploadReportToAPI(filePath, reportName, token) {
       {
         headers: {
           ...form.getHeaders(),
-          Authorization: `Bearer ${token}`,
+          // Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
       }
