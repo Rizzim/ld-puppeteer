@@ -26,7 +26,7 @@ jobs:
           git pull origin main
           
           # Install dependencies
-          npm ci --production
+          npm ci --omit=dev
           
           # Restart PM2 process
           pm2 restart puppeteer-app || pm2 start app.js --name puppeteer-app
