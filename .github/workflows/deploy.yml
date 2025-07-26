@@ -28,6 +28,10 @@ jobs:
           # Install dependencies
           npm ci --omit=dev
           
+          # Copy Nginx configuration
+          sudo cp nginx/puppeteer-app.conf /etc/nginx/sites-available/puppeteer-app
+          sudo nginx -t && sudo systemctl reload nginx
+          
           # Restart PM2 process
           pm2 restart puppeteer-app || pm2 start app.js --name puppeteer-app
           
