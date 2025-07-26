@@ -6,7 +6,7 @@ export default function (app){
     app.use(json());
     // Home route
     app.get('/', (req, res) => {
-        res.json({ status: 'ok', message: 'Puppeteer Sales Automation is running!' });
+        res.json({ status: 'ok', message: 'Puppeteer Sales Automation is running! 1' });
     });
     app.use("/api/puppeteer", puppeteerRoutes);
     app.use(errorHandler);
