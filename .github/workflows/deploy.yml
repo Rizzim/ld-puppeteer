@@ -1,0 +1,34 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Deploy to EC2
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        port: ${{ secrets.EC2_PORT }}
+        script: |
+          # Navigate to project directory
+          cd /home/ubuntu/puppeteer-app
+          
+          # Pull latest changes
+          git pull origin main
+          
+          # Install dependencies
+          npm ci --production
+          
+          # Restart PM2 process
+          pm2 restart puppeteer-app || pm2 start app.js --name puppeteer-app
+          
+          echo "Deployment completed!" 
