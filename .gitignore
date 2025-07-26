@@ -5,3 +5,4 @@ scripts/
 .env
 .DS_Store
 logs/
+images/

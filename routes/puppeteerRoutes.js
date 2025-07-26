@@ -1,6 +1,7 @@
 import { Router } from 'express';
 const router = Router();
 import { runPuppeteer } from '../controllers/puppeteerController.js';
+import { testPuppeteer } from '../controllers/testController.js';
 
 // Health check endpoint
 router.get('/health', (req, res) => {
@@ -12,6 +13,9 @@ router.get('/health', (req, res) => {
         version: process.version
     });
 });
+
+// Test Puppeteer functionality
+router.get('/test', testPuppeteer);
 
 router.post('/send-report', runPuppeteer);
 
